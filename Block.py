@@ -2,12 +2,9 @@
 # -*- coding: UTF-8 -*-
 
 class Block:
-    def __init__(self, title, row, col):
+    def __init__(self, title):
         self.title=title
-        self.row=row
-        self.col=col
 
-        self.can_left=False
-        self.can_up=False
-        self.can_right=False
-        self.can_down=False
+
+    def get_title(self):
+        return self.title
