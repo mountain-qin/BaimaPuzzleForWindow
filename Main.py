@@ -21,10 +21,23 @@ class PuzzleWindow(KeyboardListenerWindow):
     def on_char_hook(self, event:wx.KeyEvent):
         self.view_puzzle_block(event)
         self.move_puzzle_block(event)
-
+        self.disorder(event)
+        self.order(event)
         event.Skip()
 
 
+    def order(self, event:wx.KeyEvent):
+        if event.GetKeyCode()!=wx.WXK_F6: return
+        self.puzzle.order()
+        super().show_message("顺序已经调整好。" +self.puzzle.get_focus_block_message())
+
+
+    def disorder(self,event:wx.KeyEvent):
+        if event.GetKeyCode()!=wx.WXK_F5: return
+        self.puzzle.disorder()
+        super().show_message("顺序已经打乱。" +self.puzzle.get_focus_block_message())
+
+        
     def move_puzzle_block(self, event:wx.KeyEvent):
         """移动拼图方块"""
         # 需要按下ctrl
@@ -41,8 +54,7 @@ class PuzzleWindow(KeyboardListenerWindow):
         else: self.show_focus_block_message()
 
         if self.puzzle.check_successful():
-            super().show_message("恭喜你！拼图完成了！")
-            Beep(1600, 1000)
+            super().show_message("恭喜你！拼图完成了！按F5可以打乱 顺序重新开始。")
 
 
     def view_puzzle_block(self, event:wx.KeyEvent):

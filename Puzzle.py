@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 
+from random import randint
 from Block import Block
 
 class Puzzle:
@@ -13,22 +14,63 @@ class Puzzle:
         block_titles的长度要等于row *col,或者是0。
         """
 
-        self.row, self.col=row,col
+        self.row, self.col,self.block_titles =row,col,block_titles
         self.row_space_block, self.col_space_block=0,0
         self.row_focus_block, self.col_focus_block=1,0
 
-        if flag ==Puzzle.ORDER:self.init_ordered(row, col, block_titles)
-        elif flag==Puzzle.DISORDERED: self.init_disordered(row,col,block_titles)
+        if flag ==Puzzle.ORDER:self.init_ordered()
+        elif flag==Puzzle.DISORDERED: self.init_disordered()
         else: self.blocks=None
 
-    def init_disordered(self,row, col, block_titles):
-        self.init_ordered(row,col,block_titles)
+    def init_disordered(self):
+        self.init_ordered()
+        self.disorder()
 
 
-    def init_ordered(self,row, col, block_titles):
-        if len(block_titles)==0:self.block_titles=[str(i) for i in range(1, row*col+1)]
-        for i in range(col):self.block_titles.insert(0,Puzzle.SPACE)
-        self.blocks =[[Block(self.block_titles[r*col +c]) for c in range(col)] for r in range(row+1)]
+    def order(self):
+        self.init_ordered()
+
+
+    def disorder(self, n=100)    :
+        # 在空方块行列随机选择一个方块，往随机方向移动。
+        while(n>0):
+            moved=False
+            # 在空方块所在的行选择方块,排除0行
+            if randint(0,1)==0 and self.row_space_block!=0:
+                col_random=randint(0, self.col-1)
+                if col_random==self.col_space_block: continue
+                self.row_focus_block=self.row_space_block
+                self.col_focus_block=col_random
+                if self.col_focus_block<self.col_space_block:moved=self.move_to_right()
+                else:moved=self.move_to_left()
+        # 在空方块所在的列选择方块
+            else:
+                row_random =randint(1, self.row)
+                if row_random==self.row_space_block: continue
+                self.row_focus_block=row_random
+                self.col_focus_block=self.col_space_block
+                if self.row_focus_block<self.row_space_block:moved=self.move_to_down()
+                else:moved=self.move_to_up()
+            if moved: n-=1
+
+# 把第0列往右移动
+        self.row_focus_block=self.row_space_block
+        self.col_focus_block=0
+        self.move_to_right()
+
+# 把0,0方块向下移动
+        self.row_focus_block, self.col_focus_block=0,0
+        self.move_to_down()
+        self.row_focus_block,self.col_focus_block=1,0
+
+
+    def init_ordered(self):
+        if len(self.block_titles)==0:self.block_titles=[str(i) for i in range(1, self.row*self.col+1)]
+        for i in range(len(self.block_titles), (self.row+1)* self.col):
+            self.block_titles.insert(0,Puzzle.SPACE)
+
+        self.blocks =[[Block(self.block_titles[r*self.col +c]) for c in range(self.col)] for r in range(self.row+1)]
+        self.row_focus_block, self.col_focus_block=1,0
 
 
     def move_to_left(self,):
