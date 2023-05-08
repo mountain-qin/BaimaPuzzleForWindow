@@ -1,15 +1,18 @@
 #!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 
+import threading
+from urllib import request
 import json
 import os
-from re import S
 from winsound import Beep
+import zipfile
 from playsound import playsound
 import wx
 import sys
 
 from Puzzle import Puzzle
+import AppInfo
 
 sys.path.append("ui")
 from KeyboardListenerWindow import KeyboardListenerWindow
@@ -17,10 +20,85 @@ from SelectRowColWindow import SelectRowColWindow
 
 class PuzzleWindow(KeyboardListenerWindow):
 
-	def __init__(self,title="拜玛拼图",message="按光标键可以查看方块。",*args, **kw) -> None:
-		super().__init__(title=title, message=message,*args, **kw)
+	def __init__(self,title="拜玛拼图",*args, **kw) -> None:
+		super().__init__(title=title, *args, **kw)
+
+		# self.check_update()
+
 		row, col=self.read_row_col()
 		self.puzzle=Puzzle(row=row, col=col)
+
+		super().show_message("按光标键可以查看方块。")
+
+
+	def show_update_dialog(self, message, caption, url_download):
+		md=wx.MessageDialog(self, message, caption, style=wx.OK|wx.CANCEL)
+		while(True):
+			id=md.ShowModal()
+			# 只能点确定按钮
+			if id==wx.ID_OK:
+				break
+
+		super().show_message("正在下载请稍候...这需要一定的时间，你可以继续玩游戏。")
+		t=threading.Thread(target=self.down_update, args=(url_download,))
+		t.start()
+		# t.join()
+
+
+	def down_update(self, url_down):
+		# github下载太慢了
+		try:
+			temp_path=os.path.realpath("temp")
+			if not os.path.exists(temp_path):os.mkdir(temp_path)
+			file_path=os.path.join(temp_path, os.path.split(url_down)[1])
+
+			req=request.Request(url_down)
+			req.add_header("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36")
+			with request.urlopen(req) as f:
+				with open(file_path, "wb") as ff:
+						ff.write(f.read())
+
+			zip_file=zipfile.ZipFile(file_path)
+			zip_file.extract(temp_path)
+			zip_file	.close()
+
+		except BaseException as e:
+			print(e)
+
+
+	def check_update(self):
+		try:
+			self.latest=None
+			t=threading.Thread(target=self.check_new_version)
+			t.start()
+			t.join()
+
+			if not self.latest:return
+
+			# "tag_name": "v1.0",
+			tag_name=str(self.latest["tag_name"]).lower().strip()
+				# version_name="1.0"
+			version_name=("v%s" %AppInfo.version_name).lower().strip()
+			if tag_name==version_name:return
+
+			assets=self.latest["assets"]
+			for asset in assets:
+				if asset["name"]==AppInfo.app_name+".zip":
+					url_download=asset["browser_download_url"]
+
+			body=self.latest["body"]
+			if body: message=tag_name +"。\n"+ body
+			self.show_update_dialog(message, "发现新版本", url_download)
+		except:
+			pass
+
+
+	def check_new_version(self):
+		urlreleases_latest="https://api.github.com/repos/mountainqin/PuzzleForWindow/releases/latest"
+		req=request.Request(url=urlreleases_latest)
+		req.add_header("user-agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.190 Safari/537.36")
+		with request.urlopen(req) as f:
+			self.latest=json.load(fp=f)
 
 
 	def read_row_col(self):
@@ -83,7 +161,7 @@ class PuzzleWindow(KeyboardListenerWindow):
 		elif key_code==wx.WXK_DOWN: moved=self.puzzle.move_to_down()
 		else: return
 
-		if not moved: Beep(220, 400)
+		if not moved: Beep(440, 440)
 		else: self.show_focus_block_message()
 
 		if self.puzzle.check_successful():
@@ -116,6 +194,9 @@ class PuzzleWindow(KeyboardListenerWindow):
 		super().show_message(message)
 
 
-app=wx.App(False)
-PuzzleWindow()
-app.MainLoop()
+try:
+	app=wx.App(False)
+	PuzzleWindow()
+	app.MainLoop()
+except BaseException as e:
+		print(e)
