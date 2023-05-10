@@ -18,6 +18,7 @@ sys.path.append("ui")
 from KeyboardListenerWindow import KeyboardListenerWindow
 from SelectRowColWindow import SelectRowColWindow
 
+
 class PuzzleWindow(KeyboardListenerWindow):
 
 	def __init__(self,title="拜玛拼图",*args, **kw) -> None:
@@ -25,10 +26,14 @@ class PuzzleWindow(KeyboardListenerWindow):
 
 		# self.check_update()
 
+		self.dir_path=os.path.dirname(os.path.realpath(sys.argv[0]))
+
 		row, col=self.read_row_col()
 		self.puzzle=Puzzle(row=row, col=col)
 
+		self.Bind(wx.EVT_CLOSE, self.onCloseWindow)
 		super().show_message("按光标键可以查看方块。")
+
 
 
 	def show_update_dialog(self, message, caption, url_download):
@@ -166,7 +171,7 @@ class PuzzleWindow(KeyboardListenerWindow):
 
 		if self.puzzle.check_successful():
 			super().show_message("恭喜你！拼图完成了！按F5可以打乱 顺序重新开始。")
-			playsound(r"sounds/congratulation/congratulation.wav")
+			playsound(os.path.join(self.dir_path, "sounds/congratulation/congratulation.wav"))
 
 
 	def view_puzzle_block(self, event:wx.KeyEvent):
@@ -192,6 +197,14 @@ class PuzzleWindow(KeyboardListenerWindow):
 		"""显示焦点方块信息"""
 		message=self.puzzle.get_focus_block_message()
 		super().show_message(message)
+
+
+	def onCloseWindow(self, event):
+		self.Destroy()
+		# os.startfile(os.path.realpath("../MiniGame.exe"))
+		# 返回小游戏界面
+		mini_game_path=os.path.join(os.path.dirname(self.dir_path), "MiniGame.exe")
+		if os.path.exists:os.startfile(mini_game_path)
 
 
 try:
