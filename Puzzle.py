@@ -4,10 +4,14 @@
 from random import randint
 from Block import Block
 
+import Translater
+if not Translater.init():_=lambda x:x
+
+
 class Puzzle:
     DISORDERED=0
     ORDER=1
-    SPACE="空"
+    SPACE=_("null")
 
     def __init__(self, row=3, col=3, block_titles=[], flag=DISORDERED):
         """
@@ -159,10 +163,11 @@ class Puzzle:
 
     def check_successful    (self):
         # 所有方块标标题的顺序对了就可以
+
         # python ok
         return self.block_titles ==[b.get_title() for blocks in self.blocks for b in blocks]
 
 
     def get_focus_block_message(self):
         title =self.blocks[self.row_focus_block][self.col_focus_block].get_title()
-        return "%s。%s行 %s列" %(title, self.row_focus_block, self.col_focus_block+1)
+        return "%s。%s%s %s%s" %(title, self.row_focus_block,_("row"), self.col_focus_block+1,_("column"))

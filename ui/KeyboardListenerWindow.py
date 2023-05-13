@@ -1,7 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+import os
+import sys
 import wx
+
+wkd_path=os.path.dirname(os.path.realpath("."))
+
+sys.path.append(wkd_path)
+import Translater
+
+if not Translater.init(locale_path=os.path.join(wkd_path, "locale")): lambda x:x
+
 
 class KeyboardListenerWindow(wx.Frame):
     """键盘监听窗口。

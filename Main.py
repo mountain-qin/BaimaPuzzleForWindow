@@ -1,13 +1,14 @@
 #!/usr/bin/python3
 # -*- coding: UTF-8 -*-
 
+
+import locale
 import time
 from pygame import mixer
 import threading
 from urllib import request
 import json
 import os
-from winsound import Beep
 import zipfile
 from playsound import playsound
 import wx
@@ -20,10 +21,14 @@ sys.path.append("ui")
 from KeyboardListenerWindow import KeyboardListenerWindow
 from SelectRowColWindow import SelectRowColWindow
 
+import Translater
+if not Translater.init(): _=lambda x:x
+
+
 
 class PuzzleWindow(KeyboardListenerWindow):
 
-	def __init__(self,title="拜玛拼图",*args, **kw) -> None:
+	def __init__(self,title= _("BaimaPuzzle"),*args, **kw) -> None:
 		super().__init__(title=title, *args, **kw)
 
 		# self.check_update()
@@ -42,8 +47,8 @@ class PuzzleWindow(KeyboardListenerWindow):
 		self.puzzle=Puzzle(row=self.row, col=self.col)
 
 		self.Bind(wx.EVT_CLOSE, self.onCloseWindow)
-		super().show_message("按光标键可以查看方块。")
-		self.show_help()
+		super().show_message(_("Press the arrow keys to view the block. "))
+		self.view_help_first()
 		self.init_mixer()
 
 
@@ -120,7 +125,7 @@ class PuzzleWindow(KeyboardListenerWindow):
 
 	def on_char_hook(self, event:wx.KeyEvent):
 		# 查看帮助
-		if event.GetKeyCode()==wx.WXK_F1:os.startfile(os.path.join(self.dir_path, "readme.html"))
+		if event.GetKeyCode()==wx.WXK_F1:self.view_help()
 		self.control_sound(event)
 		self.control_bgm(event)
 		self.view_puzzle_block(event)
@@ -137,14 +142,14 @@ class PuzzleWindow(KeyboardListenerWindow):
 			if key_code==wx.WXK_PAGEUP:
 				if self.volume_sound<100:self.volume_sound+=1
 				self.set_sound_volume(self.volume_sound)
-				super().show_message("音效音量：%s"%self.volume_sound)
+				super().show_message(_("sound volume: %s") %self.volume_sound)
 			elif key_code==wx.WXK_PAGEDOWN:
 				if self.volume_sound>0:self.volume_sound-=1
 				self.set_sound_volume(self.volume_sound)
-				super().show_message("音效音量：%s"%self.volume_sound)
+				super().show_message(_("sound volume: %s") %self.volume_sound)
 			elif key_code==wx.WXK_HOME:
 				self.is_play_sound=not self.is_play_sound
-				super().show_message("音效开" if self.is_play_sound else "音效关")
+				super().show_message(_("sound on") if self.is_play_sound else _("sound off"))
 
 
 	def init_mixer(self):
@@ -213,19 +218,19 @@ n 调整的次数。
 	def select_row_col(self, row,col):
 		self.row,self.col=row,col
 		self.puzzle=Puzzle(row=row, col=col)
-		super().show_message("拼图现在已经是%s行%s列了。" %(row, col)+self.puzzle.get_focus_block_message())
+		super().show_message(_("Puzzle is %s rows %s columns.") %(row, col) +self.puzzle.get_focus_block_message())
 
 
 	def order(self, event:wx.KeyEvent):
 		if event.GetKeyCode()!=wx.WXK_F6: return
 		self.puzzle.order()
-		super().show_message("顺序已经调整好。" +self.puzzle.get_focus_block_message())
+		super().show_message(_("The order has been adjusted") +self.puzzle.get_focus_block_message())
 
 
 	def disorder(self,event:wx.KeyEvent):
 		if event.GetKeyCode()!=wx.WXK_F5: return
 		self.puzzle.disorder()
-		super().show_message("顺序已经打乱。" +self.puzzle.get_focus_block_message())
+		super().show_message(_("The order has been disrupted") +self.puzzle.get_focus_block_message())
 
 		
 	def move_puzzle_block(self, event:wx.KeyEvent):
@@ -246,7 +251,7 @@ n 调整的次数。
 			self.play_sound(self.sound_move)
 
 		if self.puzzle.check_successful():
-			super().show_message("恭喜你！拼图完成了！按F5可以打乱 顺序重新开始。")
+			super().show_message(_("Congratulations! The puzzle is complete! Press F5 to start over by shuffling the order"))
 			self.play_sound(self.sound_congratulation)
 
 
@@ -284,11 +289,9 @@ n 调整的次数。
 		self.save_user_setting()
 		mixer.quit()
 		self.Destroy()
-		# os.startfile(os.path.realpath("../MiniGame.exe"))
-		# 返回小游戏界面
+
 		mini_game_path=os.path.join(os.path.dirname(self.dir_path), "MiniGame.exe")
 		if os.path.exists(mini_game_path):os.startfile(mini_game_path)
-
 
 	def save_user_setting(self):
 		# 用户配置
@@ -314,12 +317,23 @@ n 调整的次数。
 
 
 
-	def show_help(self):
+	def view_help_first(self):
 		firsted_file=os.path.join(self.dir_path, "config\\firsted")
 		if not os.path.exists(firsted_file):
 			os.makedirs(os.path.dirname(firsted_file))
 			with open(firsted_file,"w") as f:pass
-			os.startfile(os.path.join(self.dir_path, "readme.html"))
+			self.view_help()
+
+
+
+	def view_help(self):
+		readme_path=os.path.join(self.dir_path,"documentation\\%s\\readme.html" %locale.getdefaultlocale()[0])
+		if not os.path.exists(readme_path):readme_path=os.path.join(self.dir_path, "readme.html")
+		os.startfile(readme_path)
+
+		readme_path=os.path.join(self.dir_path,"documentation\\%s\\readme.html" %locale.getdefaultlocale()[0])
+		if not os.path.exists(readme_path):readme_path=os.path.join(self.dir_path, "readme.html")
+		os.startfile(readme_path)
 
 
 try:

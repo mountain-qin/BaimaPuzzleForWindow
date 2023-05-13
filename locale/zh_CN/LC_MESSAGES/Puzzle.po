@@ -1,0 +1,101 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Puzzle\n"
+"POT-Creation-Date: 2023-05-13 10:38+0800\n"
+"PO-Revision-Date: 2023-05-13 10:48+0800\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: zh_CN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 2.2.2\n"
+"X-Poedit-Basepath: E:/Python/Baima/MiniGame/src/Puzzle\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Poedit-KeywordsList: _\n"
+"X-Poedit-SearchPath-0: .\n"
+
+#: Main.py:29 test/translatertest.py:9
+msgid "BaimaPuzzle"
+msgstr "拜玛拼图"
+
+#: Main.py:48
+msgid "Press the arrow keys to view the block. "
+msgstr "按光标键查看方块。"
+
+#: Main.py:143 Main.py:147
+#, python-format
+msgid "sound volume: %s"
+msgstr "音效音量： %s"
+
+#: Main.py:150
+msgid "sound on"
+msgstr "音效开"
+
+#: Main.py:150
+msgid "sound off"
+msgstr "音效关"
+
+#: Main.py:219
+#, python-format
+msgid "Puzzle is %s rows %s columns."
+msgstr "拼图已经是 %s 行 %s 列。"
+
+#: Main.py:225
+msgid "The order has been adjusted"
+msgstr "顺序已经调整好了。"
+
+#: Main.py:231
+msgid "The order has been disrupted"
+msgstr "顺序已经打乱了。"
+
+#: Main.py:252 test/translatertest.py:13
+msgid ""
+"Congratulations! The puzzle is complete! Press F5 to start over by shuffling "
+"the order"
+msgstr "恭喜你！拼图已经完成了。按F5打乱顺序。"
+
+#: Puzzle.py:14
+msgid "null"
+msgstr "空"
+
+#: Puzzle.py:173
+msgid "row"
+msgstr "行"
+
+#: Puzzle.py:173
+msgid "column"
+msgstr "列"
+
+#: ui/SelectRowColWindow.py:17
+msgid "Baima Puzzle - Select count of Rows and columns"
+msgstr "拜玛拼图-选择行列数"
+
+#: ui/SelectRowColWindow.py:22
+msgid ""
+"Please press the up or down arrow to select the count of rows, press the "
+"left or right arrow to select the count of columns, and press Enter to "
+"confirm"
+msgstr "请按上下光标选择行数，按左右光标选择列数，按回车确定。"
+
+#: ui/SelectRowColWindow.py:31 ui/SelectRowColWindow.py:36
+msgid "rows"
+msgstr "行"
+
+#: ui/SelectRowColWindow.py:41 ui/SelectRowColWindow.py:46
+msgid "columns"
+msgstr "列"
+
+#: ui/SelectRowColWindow.py:50
+msgid "Please press the up or down arrow to select the count of rows"
+msgstr "请按上下光标选择行数。"
+
+#: ui/SelectRowColWindow.py:51
+msgid "Please press the left or right arrow to select the count of columns."
+msgstr "请按左右光标选择列数。"
+
+#~ msgid "Congratulations! The puzzle is complete!"
+#~ msgstr "恭喜你！拼图已经完成了。"
+
+#~ msgid "Press F5 to start over by shuffling the order"
+#~ msgstr "按F5打乱顺序。"
