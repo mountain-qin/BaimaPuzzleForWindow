@@ -14,15 +14,15 @@ from playsound import playsound
 import wx
 import sys
 
-from Puzzle import Puzzle
-import AppInfo
+from puzzle import Puzzle
+import app_info
 
 sys.path.append("ui")
-from KeyboardListenerWindow import KeyboardListenerWindow
-from SelectRowColWindow import SelectRowColWindow
+from keyboard_listener_window import KeyboardListenerWindow
+from select_row_col_window import SelectRowColWindow
 
-import Translater
-if not Translater.init(): _=lambda x:x
+import translater
+if not translater.init(): _=lambda x:x
 
 
 
@@ -100,12 +100,12 @@ class PuzzleWindow(KeyboardListenerWindow):
 			# "tag_name": "v1.0",
 			tag_name=str(self.latest["tag_name"]).lower().strip()
 				# version_name="1.0"
-			version_name=("v%s" %AppInfo.version_name).lower().strip()
+			version_name=("v%s" %app_info.version_name).lower().strip()
 			if tag_name==version_name:return
 
 			assets=self.latest["assets"]
 			for asset in assets:
-				if asset["name"]==AppInfo.app_name+".zip":
+				if asset["name"]==app_info.app_name+".zip":
 					url_download=asset["browser_download_url"]
 
 			body=self.latest["body"]
@@ -290,8 +290,8 @@ n 调整的次数。
 		mixer.quit()
 		self.Destroy()
 
-		mini_game_path=os.path.join(os.path.dirname(self.dir_path), "MiniGame.exe")
-		if os.path.exists(mini_game_path):os.startfile(mini_game_path)
+		baima_mini_game_path=os.path.join(os.path.dirname(self.dir_path), "BaimaMiniGame.exe")
+		if os.path.exists(baima_mini_game_path):os.startfile(baima_mini_game_path)
 
 	def save_user_setting(self):
 		# 用户配置
@@ -336,9 +336,9 @@ n 调整的次数。
 		os.startfile(readme_path)
 
 
+app=wx.App(False)
 try:
-	app=wx.App(False)
 	PuzzleWindow()
-	app.MainLoop()
 except BaseException as e:
 		print(e)
+app.MainLoop()

@@ -4,12 +4,12 @@
 import os
 import sys
 import wx
-from KeyboardListenerWindow import KeyboardListenerWindow
+from keyboard_listener_window import KeyboardListenerWindow
 
 main_dir_path=os.path.dirname(os.path.abspath(sys.argv[0]))
 sys.path.append(main_dir_path)
-import Translater
-if not Translater.init(locale_path=os.path.join(main_dir_path,"locale")): _=lambda x:x
+import translater
+if not translater.init(locale_path=os.path.join(main_dir_path,"locale")): _=lambda x:x
 
 
 class  SelectRowColWindow(KeyboardListenerWindow):

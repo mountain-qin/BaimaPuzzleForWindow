@@ -2,10 +2,10 @@
 # -*- coding: UTF-8 -*-
 
 from random import randint
-from Block import Block
+from block import Block
 
-import Translater
-if not Translater.init():_=lambda x:x
+import translater
+if not translater.init():_=lambda x:x
 
 
 class Puzzle:
